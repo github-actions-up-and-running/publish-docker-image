@@ -1,0 +1,22 @@
+name: Publish Docker Image
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.0.0
+      - name: Get tag name
+        id: get-tag
+        run: echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
+      - name: Publish to GitHub Packages
+        # 2.12
+        uses: elgohr/Publish-Docker-Github-Action@a6e48211ae26c311681c44c45a0ca5130dd9c7aa
+        with:
+          name: ${{ github.repository }}/hello
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          tags: ${{ steps.get-tag.outputs.tag }}
