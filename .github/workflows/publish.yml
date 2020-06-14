@@ -8,15 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.0.0
-      - name: Get tag name
-        id: get-tag
-        run: echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
       - name: Publish to GitHub Packages
-        # 2.12
-        uses: elgohr/Publish-Docker-Github-Action@a6e48211ae26c311681c44c45a0ca5130dd9c7aa
+        uses: docker/build-push-action@v1.1.0
         with:
-          name: ${{ github.repository }}/hello
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          tags: ${{ steps.get-tag.outputs.tag }}
+          repository: ${{ github.repository }}/hello
+          tag_with_sha: true
